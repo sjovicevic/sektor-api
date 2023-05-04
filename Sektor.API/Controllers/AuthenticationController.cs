@@ -11,25 +11,28 @@ namespace Sektor.API.Controllers;
 public class AuthenticationController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    public class UserAdmin
-    {
-        public int UserAdminId { get; set; }
-        public string UserAdminUserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
 
-        public UserAdmin(
-            int userAdminId,
-            string userAdminUserName,
-            string firstName,
-            string lastName)
+    public class Employee {
+        public int EmployeeId { get; set; }
+        public string EmployeeUserName { get; set; }
+        public bool Admin { get; init; }
+        public string Password { get; init; }
+
+        public Employee(
+            int employeeId,
+            string employeeUserName,
+            bool admin,
+            string password
+        )
         {
-            UserAdminId = userAdminId;
-            UserAdminUserName = userAdminUserName;
-            FirstName = firstName;
-            LastName = lastName;
+            EmployeeId = employeeId;
+            EmployeeUserName = employeeUserName;
+            Admin = admin;
+            Password = password;
         }
     }
+
+
     public class AuthenticationRequestBody
     {
         public string? UserName { get; set; }
@@ -61,10 +64,11 @@ public class AuthenticationController : ControllerBase
             securityKey, SecurityAlgorithms.HmacSha256);
 
         var claimsForToken = new List<Claim>();
-        claimsForToken.Add(new Claim("sub", user.UserAdminId.ToString()));
-        claimsForToken.Add(new Claim("given_name", user.FirstName));
-        claimsForToken.Add(new Claim("family_name", user.LastName));
+        claimsForToken.Add(new Claim("sub", user.EmployeeId.ToString()));
+        claimsForToken.Add(new Claim("name", user.EmployeeUserName));
+        claimsForToken.Add(new Claim("admin", user.Admin.ToString()));
 
+        
         var jwtSecurityToken = new JwtSecurityToken(
             _configuration["Authentication:Issuer"],
             _configuration["Authentication:Audience"],
@@ -79,12 +83,17 @@ public class AuthenticationController : ControllerBase
         return Ok(tokenToReturn);
     }
 
-    private UserAdmin ValidateUserCredentials(string? userName, string? password)
+    private Employee ValidateUserCredentials(string? userName, string? password)
     {
-        return new UserAdmin(
-            1,
-            "stefalone",
-            "Stefan",
-            "Jovicevic");
+        var listOfEmployees = new List<Employee>
+        {
+            new Employee(1, "jovanapalavestra", true, "Sektor442020"),
+            new Employee(2, "stefanjovicevic", false, "stefan")
+        };
+
+        var employee = listOfEmployees.FirstOrDefault(
+            x => x.EmployeeUserName == userName && x.Password == password);
+        
+        return employee;
     }
 }

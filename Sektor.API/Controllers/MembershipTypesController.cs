@@ -9,7 +9,6 @@ namespace Sektor.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-[Authorize]
 public class MembershipTypesController : ControllerBase
 {
     private readonly IMembershipTypeRepository _membershipTypeRepository;
@@ -25,6 +24,7 @@ public class MembershipTypesController : ControllerBase
     }
     // GET: api/<MembershipTypesController>
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<MembershipType>>> Get()
     {
         var membershipTypes = await _membershipTypeRepository.GetAllMembershipTypesAsync();
@@ -33,6 +33,7 @@ public class MembershipTypesController : ControllerBase
 
     // GET api/<MembershipTypesController>/5
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<MembershipType>> Get(int id)
     {
         var membershipType = await _membershipTypeRepository.GetMembershipTypeByIdAsync(id);
@@ -47,6 +48,7 @@ public class MembershipTypesController : ControllerBase
 
     // POST api/<MembershipTypesController>
     [HttpPost]
+    [Authorize(Policy = "ManagerPolicy")]
     public async Task<ActionResult> Post(MembershipTypeCreationDto dto)
     {
         _membershipTypeRepository.AddNewMembershipType(dto);
@@ -63,6 +65,7 @@ public class MembershipTypesController : ControllerBase
 
     // PUT api/<MembershipTypesController>/5
     [HttpPut("{id}")]
+    [Authorize(Policy = "ManagerPolicy")]
     public async Task<ActionResult> Put(int id, [FromBody] MembershipTypeCreationDto dto)
     {
         var membershipType = await _membershipTypeRepository.GetMembershipTypeByIdAsync(id);
@@ -87,6 +90,7 @@ public class MembershipTypesController : ControllerBase
 
     // DELETE api/<MembershipTypesController>/5
     [HttpDelete("{id}")]
+    [Authorize(Policy = "ManagerPolicy")]
     public async Task<ActionResult> Delete(int id)
     {
         var membershipType = await _membershipTypeRepository.GetMembershipTypeByIdAsync(id);
