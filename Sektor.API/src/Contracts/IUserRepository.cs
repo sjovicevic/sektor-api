@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Sektor.API.src.Dtos;
 using Sektor.API.src.Entities;
+using Sektor.API.src.ResourceParameters;
+using Sektor.API.src.Helpers;
 
 namespace Sektor.API.src.Contracts;
 
 public interface IUserRepository 
 {
     Task<IEnumerable<User>> GetAllUsersAsync();
-    Task<IEnumerable<User>> GetAllUsersAsync(string? name);
+    Task<PagedList<User>> GetAllUsersAsync(UsersResourceParameters usersResourceParameters);
     Task<User?> GetUserByIdAsync(int id);
     void AddNewUser(UserCreationDto userCreationDto);
     void UpdateUser(User user, UserCreationDto userCreationDto);

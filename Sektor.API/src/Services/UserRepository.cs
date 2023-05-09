@@ -6,6 +6,8 @@ using Sektor.API.src.Contracts;
 using Sektor.API.src.Dtos;
 using Sektor.API.src.Entities;
 using Sektor.API.src.Context;
+using Sektor.API.src.ResourceParameters;
+using Sektor.API.src.Helpers;
 
 namespace Sektor.API.src.Services;
 
@@ -25,19 +27,31 @@ public class UserRepository : IUserRepository
         return users;
     }
 
-    public async Task<IEnumerable<User>> GetAllUsersAsync(string? name)
+    public async Task<PagedList<User>> GetAllUsersAsync(UsersResourceParameters usersResourceParameters)
     {
-        if (string.IsNullOrEmpty(name))
+        if (usersResourceParameters == null) 
         {
-            return await GetAllUsersAsync();
+            throw new ArgumentNullException(nameof(usersResourceParameters));
         }
+        var searchQuery = usersResourceParameters.SearchQuery;
 
-        name = name.Trim();
+        var collection = _context.Users as IQueryable<User>;
 
-        return await _context.Users
-            .Where(c => c.FirstName == name)
-            .OrderBy(c => c.FirstName)
-            .ToListAsync();
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            searchQuery = searchQuery.Trim();
+            collection = collection
+            .Where(c => c.FirstName.Contains(searchQuery)
+            || c.LastName.Contains(searchQuery)
+            || c.Email.Contains(searchQuery))
+            .OrderBy(c => c.FirstName);
+        }
+        
+        return await PagedList<User>.CreateAsync(
+            collection,
+            usersResourceParameters.PageNumber,
+            usersResourceParameters.PageSize);
+        
     }
 
     public async Task<User?> GetUserByIdAsync(int id)
