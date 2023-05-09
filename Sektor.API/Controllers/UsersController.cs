@@ -18,6 +18,7 @@ namespace Sektor.API.Controllers;
 [Route("[controller]")]
 [ApiController]
 [Authorize]
+[EnableCors]
 public class UsersController : ControllerBase
 {
     private readonly CreateUserValidator _createUserValidator;
