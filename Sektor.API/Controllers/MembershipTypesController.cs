@@ -105,7 +105,7 @@ public class MembershipTypesController : ControllerBase
         try
         {
             await _membershipTypeRepository.SaveChangesAsync();
-            return StatusCode(201);
+            return StatusCode(204);
         }
         catch (Exception e)
         {

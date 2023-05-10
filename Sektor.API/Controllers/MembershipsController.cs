@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Sektor.API.src.Contracts;
 using Sektor.API.src.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Sektor.API.src.Core.Validators;
+using Sektor.API.src.Core.Errors;
+using Sektor.API.src.Core.Extensions;
 
 namespace Sektor.API.Controllers;
 
@@ -15,17 +18,20 @@ public class MembershipsController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IMembershipTypeRepository _membershipTypeRepository;
     private readonly IMapper _mapper;
+    private readonly CreateMembershipValidator _createMembershipValidator;
 
     public MembershipsController(
         IMembershipRepository membershipRepository,
         IUserRepository userRepository,
         IMembershipTypeRepository membershipTypeRepository,
-        IMapper mapper)
+        IMapper mapper,
+        CreateMembershipValidator createMembershipValidator)
     {
         _membershipRepository = membershipRepository;
         _userRepository = userRepository;
         _membershipTypeRepository = membershipTypeRepository;
         _mapper = mapper;
+        _createMembershipValidator = createMembershipValidator;
     }
 
     // GET: api/<MembershipsController>
@@ -54,7 +60,7 @@ public class MembershipsController : ControllerBase
 
     // POST api/<MembershipsController>
     [HttpPost("{userId}/{membershipTypeId}")]
-    public async Task<ActionResult> Post(int userId, int membershipTypeId, [FromBody] MembershipCreationDto dto)
+    public async Task<IActionResult> Post(int userId, int membershipTypeId, [FromBody] MembershipCreationDto dto)
     {
         var user = await _userRepository.GetUserByIdAsync(userId);
         var membershipType = await _membershipTypeRepository.GetMembershipTypeByIdAsync(membershipTypeId);
@@ -62,6 +68,13 @@ public class MembershipsController : ControllerBase
         if(user == null || membershipType == null)
         {
             return NotFound();
+        }
+
+        var result = _createMembershipValidator.Validate(dto);
+
+        if (!result.IsValid)
+        {
+            return result.AsClientErrors();
         }
 
         _membershipRepository.AddNewMembership(dto, user, membershipType);
