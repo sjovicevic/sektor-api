@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Sektor.API.src.Contracts;
 using Sektor.API.src.Dtos;
 using Sektor.API.src.Entities;
+using Sektor.API.src.Core.Validators;
+using Sektor.API.src.Core.Errors;
+using Sektor.API.src.Core.Extensions;
 
 namespace Sektor.API.Controllers;
 
@@ -14,13 +17,17 @@ public class MembershipTypesController : ControllerBase
     private readonly IMembershipTypeRepository _membershipTypeRepository;
     private readonly IMapper _mapper;
 
+    private readonly CreateMembershipTypeValidator _createMembershipTypeValidator;
+
     public MembershipTypesController(
         IMembershipTypeRepository membershipTypeRepository,
-        IMapper mapper
+        IMapper mapper,
+        CreateMembershipTypeValidator createMembershipTypeValidator
     )
     {
         _membershipTypeRepository = membershipTypeRepository;
         _mapper = mapper;
+        _createMembershipTypeValidator = createMembershipTypeValidator;
     }
     // GET: api/<MembershipTypesController>
     [HttpGet]
@@ -49,8 +56,14 @@ public class MembershipTypesController : ControllerBase
     // POST api/<MembershipTypesController>
     [HttpPost]
     [Authorize(Policy = "ManagerPolicy")]
-    public async Task<ActionResult> Post(MembershipTypeCreationDto dto)
+    public async Task<IActionResult> Post(MembershipTypeCreationDto dto)
     {
+        var result = await _createMembershipTypeValidator.ValidateAsync(dto);
+
+        if(!result.IsValid)
+        {
+            return result.AsClientErrors();
+        }
         _membershipTypeRepository.AddNewMembershipType(dto);
         try
         {

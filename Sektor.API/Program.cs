@@ -22,6 +22,7 @@ builder.Services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>(
 
 builder.Services.AddTransient<CreateUserValidator>();
 builder.Services.AddTransient<CreateMembershipValidator>();
+builder.Services.AddTransient<CreateMembershipTypeValidator>(); 
 
 builder.Services.AddDbContext<SektorContext>(
     dbContextOptions => dbContextOptions.UseSqlServer(
