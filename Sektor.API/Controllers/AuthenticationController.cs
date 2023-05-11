@@ -60,16 +60,14 @@ public class AuthenticationController : ControllerBase
             _configuration["Authentication:Audience"],
             claimsForToken,
             DateTime.Now,
-            DateTime.Now.AddHours(1),
+            DateTime.Now.AddDays(7),
             signingCredentials);
 
         var tokenToReturn = new JwtSecurityTokenHandler()
             .WriteToken(jwtSecurityToken);
 
-        var info = _mapper.Map<EmployeeDto>(user);
-
-        Response.Headers.Add("X-Auth-Info", JsonSerializer.Serialize(info));
-        return Ok(tokenToReturn);
+        Response.Headers.Add("Authorization", tokenToReturn);
+        return Ok(_mapper.Map<EmployeeDto>(user));
     }
 
     private Employee ValidateUserCredentials(string? userName, string? password)
