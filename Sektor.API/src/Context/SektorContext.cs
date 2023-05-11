@@ -6,9 +6,9 @@ namespace Sektor.API.src.Context;
 
 public class SektorContext : DbContext
 {
-    public DbSet<User> Users { get; set; } 
-    public DbSet<Membership> Memberships { get; set; }
-    public DbSet<MembershipType> MembershipTypes { get; set; }
+    public virtual DbSet<User> Users { get; set; } 
+    public virtual DbSet<Membership> Memberships { get; set; }
+    public virtual DbSet<MembershipType> MembershipTypes { get; set; }
 
     public SektorContext(DbContextOptions options) : base(options)
     {
