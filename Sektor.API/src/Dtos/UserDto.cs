@@ -11,5 +11,4 @@ public class UserDto
     public bool Student { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsActive { get; set; }
-    public HashSet<Membership> Memberships { get; set; }
 }

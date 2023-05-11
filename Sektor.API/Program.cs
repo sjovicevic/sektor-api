@@ -75,6 +75,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors(builder => builder
     .AllowAnyOrigin()
     .AllowAnyMethod()
+    .WithExposedHeaders("X-Pagination") 
     .AllowAnyHeader());
 
 app.UseHttpsRedirection();
