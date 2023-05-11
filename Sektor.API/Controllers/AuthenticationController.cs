@@ -3,35 +3,18 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
+using Sektor.API.src.Entities;
+using AutoMapper;
 
 namespace Sektor.API.Controllers;
 
-[Route("authentication")]
+[Route("auth")]
 [ApiController]
 public class AuthenticationController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-
-    public class Employee {
-        public int EmployeeId { get; set; }
-        public string EmployeeUserName { get; set; }
-        public bool Admin { get; init; }
-        public string Password { get; init; }
-
-        public Employee(
-            int employeeId,
-            string employeeUserName,
-            bool admin,
-            string password
-        )
-        {
-            EmployeeId = employeeId;
-            EmployeeUserName = employeeUserName;
-            Admin = admin;
-            Password = password;
-        }
-    }
-
+    private readonly IMapper _mapper;
 
     public class AuthenticationRequestBody
     {
@@ -39,13 +22,16 @@ public class AuthenticationController : ControllerBase
         public string? Password { get; set; }
     }
 
-    public AuthenticationController(IConfiguration configuration)
+    public AuthenticationController(
+        IConfiguration configuration,
+        IMapper mapper)
     {
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
-    [HttpPost("authenticate")]
-    public ActionResult<string> Authenticate(
+    [HttpPost]
+     public ActionResult<string> Authenticate(
         AuthenticationRequestBody authenticationRequestBody)
     {
         var user = ValidateUserCredentials(
@@ -80,6 +66,9 @@ public class AuthenticationController : ControllerBase
         var tokenToReturn = new JwtSecurityTokenHandler()
             .WriteToken(jwtSecurityToken);
 
+        var info = _mapper.Map<EmployeeDto>(user);
+
+        Response.Headers.Add("X-Auth-Info", JsonSerializer.Serialize(info));
         return Ok(tokenToReturn);
     }
 
