@@ -19,7 +19,10 @@ public class UserRepository : IUserRepository
     {
         _context = context;
     }
-
+    public IEnumerable<User> GetAllUsers()
+    {
+        return _context.Users.ToList();
+    }
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
         var users = await _context.Users

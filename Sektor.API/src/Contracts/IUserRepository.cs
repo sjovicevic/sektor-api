@@ -8,6 +8,7 @@ namespace Sektor.API.src.Contracts;
 
 public interface IUserRepository 
 {
+    IEnumerable<User> GetAllUsers();
     Task<IEnumerable<User>> GetAllUsersAsync();
     Task<PagedList<User>> GetAllUsersAsync(UsersResourceParameters usersResourceParameters);
     Task<User?> GetUserByIdAsync(int id);
