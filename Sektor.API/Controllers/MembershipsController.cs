@@ -6,8 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Sektor.API.src.Core.Validators;
 using Sektor.API.src.Core.Errors;
 using Sektor.API.src.Core.Extensions;
+using Sektor.API.src.ResourceParameters;
+using Sektor.API.src.Helpers;
+using System.Text.Json;
 
 namespace Sektor.API.Controllers;
+
 
 [Route("[controller]")]
 [ApiController]
@@ -35,13 +39,62 @@ public class MembershipsController : ControllerBase
     }
 
     // GET: api/<MembershipsController>
-    [HttpGet]
-    public async Task<IActionResult> Get()
+    [HttpGet(Name = "GetMemberships")]
+    public async Task<IActionResult> Get([FromQuery] MembershipsResourceParameters membershipsResourceParameters)
     {
-        var memberships = await _membershipRepository.GetAllMembershipsAsync();
+        var memberships = await _membershipRepository.GetAllMembershipsAsync(membershipsResourceParameters);
+
+        var previousPageLink = memberships.HasPrevious ?
+            CreateMembershipsResourceUri(membershipsResourceParameters, ResourceUriType.PreviousPage) : null;
+
+        var nextPageLink = memberships.HasNext ?
+            CreateMembershipsResourceUri(membershipsResourceParameters, ResourceUriType.NextPage) : null;
+
+        var paginationMetadata = new 
+        {
+            totalCount = memberships.TotalCount,
+            pageSize = memberships.PageSize,
+            currentPage = memberships.CurrentPage,
+            totalPages = memberships.TotalPages,
+            previousPageLink = previousPageLink,
+            nextPageLink = nextPageLink
+        };
+
+        Response.Headers.Add("X-Pagination",
+            JsonSerializer.Serialize(paginationMetadata));
+
         return Ok(_mapper.Map<List<MembershipDto>>(memberships));
     }
 
+    private string? CreateMembershipsResourceUri(
+        MembershipsResourceParameters membershipsResourceParameters,
+        ResourceUriType type)
+    {
+        switch(type) 
+        {
+            case ResourceUriType.PreviousPage:
+                return Url.Link("GetMemberships",
+                new {
+                    pageNumber = membershipsResourceParameters.PageNumber - 1,
+                    pageSize = membershipsResourceParameters.PageSize,
+                    searchQuery = membershipsResourceParameters.SearchQuery
+                });
+            case ResourceUriType.NextPage:
+                return Url.Link("GetMemberships",
+                new {
+                    pageNumber = membershipsResourceParameters.PageNumber + 1,
+                    pageSize = membershipsResourceParameters.PageSize,
+                    searchQuery = membershipsResourceParameters.SearchQuery
+                });
+            default:
+                return Url.Link("GetMemberships",
+                new {
+                    pageNumber = membershipsResourceParameters.PageNumber,
+                    pageSize = membershipsResourceParameters.PageSize,
+                    searchQuery = membershipsResourceParameters.SearchQuery
+                });
+        }
+    }
 
     // GET api/<MembershipsController>/5
     [HttpGet("{id}")]

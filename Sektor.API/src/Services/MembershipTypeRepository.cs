@@ -55,4 +55,16 @@ public class MembershipTypeRepository : IMembershipTypeRepository
     {
         return await _context.SaveChangesAsync() >= 0;
     }
+
+    public bool CheckIfMembershipExists(MembershipType membershipType)
+    {
+        var memberships = _context.Memberships.Where(m => m.MembershipType.Id == membershipType.Id);
+        
+        if(memberships != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

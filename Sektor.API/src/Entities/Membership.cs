@@ -7,5 +7,5 @@ public class Membership : Entity
     public int UserId { get; set; }
     public User User { get; set; }
     public int MembershipTypeId { get; set; }
-    public MembershipType MembershipType { get; set; }
+    public MembershipType? MembershipType { get; set; }
 }

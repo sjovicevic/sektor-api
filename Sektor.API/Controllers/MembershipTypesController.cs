@@ -113,6 +113,16 @@ public class MembershipTypesController : ControllerBase
             return NotFound();
         }
 
+        bool membershipExists = _membershipTypeRepository.CheckIfMembershipExists(membershipType);
+
+        if(membershipExists) 
+        {
+            return BadRequest(new ClientError {
+                PropertyName = "MembershipTypeId",
+                ErrorMessage = "Membership type is in use and cannot be deleted."
+            });
+        }
+
         _membershipTypeRepository.DeleteMembershipType(membershipType);
 
         try

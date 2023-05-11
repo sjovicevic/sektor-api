@@ -10,5 +10,6 @@ public interface IMembershipTypeRepository
     void AddNewMembershipType(MembershipTypeCreationDto dto);
     void DeleteMembershipType(MembershipType membershipType);
     void UpdateMembershipType(MembershipType membershipType, MembershipTypeCreationDto dto);
+    bool CheckIfMembershipExists(MembershipType membershipType);
     Task<bool> SaveChangesAsync();
 }
