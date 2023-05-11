@@ -28,6 +28,8 @@ builder.Services.AddDbContext<SektorContext>(
     dbContextOptions => dbContextOptions.UseSqlServer(
         builder.Configuration["ConnectionStrings:ApiConnectionString"]));
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
