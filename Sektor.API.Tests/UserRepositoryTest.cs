@@ -40,5 +40,9 @@ public class UserRepositoryTest
         Assert.Equal(5, users.Count());
         Assert.Equal("Stefan", users.ElementAt(0).FirstName);
         Assert.Equal("Jovicevic", users.ElementAt(0).LastName);
+        Assert.Equal("Nikolic", users.ElementAt(1).LastName);
+        Assert.Equal("Milan", users.ElementAt(2).FirstName);
+        Assert.Equal("Andjela", users.ElementAt(3).FirstName);
+        Assert.Equal("Milos", users.ElementAt(4).FirstName);
     }
 }
