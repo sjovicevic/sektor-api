@@ -78,6 +78,7 @@ app.UseCors(builder => builder
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .WithExposedHeaders("X-Pagination") 
+    .WithExposedHeaders("Authorization")
     .AllowAnyHeader());
 
 app.UseHttpsRedirection();
