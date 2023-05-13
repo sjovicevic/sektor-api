@@ -6,11 +6,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 using Sektor.API.src.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 
 namespace Sektor.API.Controllers;
 
 [Route("auth")]
 [ApiController]
+[EnableCors]
 public class AuthenticationController : ControllerBase
 {
     private readonly IConfiguration _configuration;
