@@ -45,4 +45,16 @@ public class UserRepositoryTest
         Assert.Equal("Andjela", users.ElementAt(3).FirstName);
         Assert.Equal("Milos", users.ElementAt(4).FirstName);
     }
+
+    public void GetAllUsersWithSearchQuery_ShouldReturnStefan()
+    {
+        var data = new List<User>
+        {
+            new User { FirstName = "Stefan", LastName = "Jovicevic", Student = true, Email = "jovicevicst@icloud.com"},
+            new User { FirstName = "Marko", LastName = "Nikolic", Student = true, Email = "marko@icloud.com"},
+            new User { FirstName = "Milan", LastName = "Jovanovic", Student = true, Email = "milan@icloud.com"},
+            new User { FirstName = "Andjela", LastName = "Mitrovic", Student = true, Email = "andjela@icloud.com"},
+            new User { FirstName = "Milos", LastName = "Andjelic", Student = true, Email = "milos@icloud.com"}
+        }.AsQueryable();
+    }
 }
