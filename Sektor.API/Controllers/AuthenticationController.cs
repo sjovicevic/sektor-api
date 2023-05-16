@@ -62,13 +62,13 @@ public class AuthenticationController : ControllerBase
             _configuration["Authentication:Audience"],
             claimsForToken,
             DateTime.Now,
-            DateTime.Now.AddDays(7),
+            DateTime.Now.AddHours(24),
             signingCredentials);
 
         var tokenToReturn = new JwtSecurityTokenHandler()
             .WriteToken(jwtSecurityToken);
 
-        Response.Headers.Add("Authorization", tokenToReturn);
+        Response.Cookies.Append("Authorization", tokenToReturn);
         return Ok(_mapper.Map<EmployeeDto>(user));
     }
 
