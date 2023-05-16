@@ -15,6 +15,7 @@ namespace Sektor.API.Controllers;
 [EnableCors]
 public class AuthenticationController : ControllerBase
 {
+    //comment
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
 
