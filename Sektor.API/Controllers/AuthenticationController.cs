@@ -70,6 +70,8 @@ public class AuthenticationController : ControllerBase
             .WriteToken(jwtSecurityToken);
 
         Response.Cookies.Append("Authorization", tokenToReturn);
+
+        
         return Ok(_mapper.Map<EmployeeDto>(user));
     }
 
